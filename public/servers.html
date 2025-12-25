@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comorade - Servers</title>
+  <style>
+      :root {
+          --bg: #0f1115;
+          --panel: rgba(26,31,41,0.85);
+          --text: #e6eaf2;
+          --muted: #9aa4b2;
+          --accent: #5865f2;
+          --accent-2: #3ba55d;
+          --radius: 14px;
+          --shadow: 0 8px 24px rgba(0,0,0,0.4);
+      }
+      body { margin:0; font-family:"Segoe UI",Roboto,Arial,sans-serif;
+          background: radial-gradient(1200px 600px at 20% 0%, #151925 20%, #0f1115 60%, #0c0f14 100%);
+          color: var(--text); }
+      header { display:flex; justify-content:space-between; align-items:center;
+          padding:18px 24px; background:rgba(20,22,28,0.85);
+          backdrop-filter:blur(8px); border-bottom:1px solid #262c3b; }
+      header h1 { font-size:1.4rem; margin:0; }
+      nav { display:flex; gap:20px; }
+      nav a { color:var(--muted); text-decoration:none; font-weight:600; transition:color 0.2s; }
+      nav a:hover { color:var(--accent); }
+      main { padding:40px; display:grid; gap:24px; }
+      .panel { background:var(--panel); border-radius:var(--radius); padding:32px; box-shadow:var(--shadow); }
+      .panel h2 { margin:0 0 16px; font-size:1.4rem; }
+      .guild-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
+      .guild-card { background:var(--panel); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+          text-align:center; transition:transform 0.2s, box-shadow 0.2s; }
+      .guild-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.6); }
+      .guild-card h3 { margin:0 0 8px; font-size:1.1rem; }
+      .guild-card p { margin:0; color:var(--muted); font-size:0.9rem; }
+      .manage-button { margin-top:12px; display:inline-block; background:linear-gradient(135deg,var(--accent-2),#2d7d46);
+          color:#fff; font-weight:600; padding:8px 16px; border-radius:6px; text-decoration:none;
+          box-shadow:0 4px 12px rgba(59,165,93,0.35); transition:background 0.2s ease; }
+      .manage-button:hover { background:#2d7d46; }
+      footer { text-align:center; padding:16px; font-size:0.85rem; color:var(--muted);
+          border-top:1px solid #262c3b; background:rgba(20,22,28,0.85); }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Comorade</h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/servers">Servers</a>
+  </nav>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Your Servers</h2>
+    <div class="guild-list" id="guilds">
+      <p>Loading servers...</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 Comorade Bot • Secure • Modern • Reliable<br>
+  <strong style="display:block; font-size:1.2rem; margin-top:8px; color:#e6eaf2;">
+    THIS LIST ONLY DISPLAYS SERVERS THAT COMORADE IS INVITED TO
+  </strong>
+</footer>
+
+<script src="servers.js"></script>
+</body>
+</html>

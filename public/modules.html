@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comorade - Modules</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+      body {
+          font-family: 'Inter', sans-serif;
+          background-color: #0a0a0a;
+          color: #d0d0d0;
+          margin: 0;
+          padding: 2rem;
+      }
+
+      h1, p {
+          text-align: center;
+          color: #2196f3;
+      }
+
+      #user-info {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 600;
+          color: #d0d0d0;
+      }
+      #user-info img {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+      }
+
+      #module-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 1.5rem;
+          margin-top: 2rem;
+      }
+
+      .module-card {
+          background-color: #111;
+          border: 1px solid #1a1a1a;
+          border-radius: 10px;
+          padding: 1rem;
+          color: #d0d0d0;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: box-shadow 0.3s ease, transform 0.2s ease;
+          text-align: left;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          height: 240px; /* square tile height */
+      }
+
+      .module-card:hover {
+          box-shadow: 0 0 12px rgba(33, 150, 243, 0.3);
+          transform: translateY(-4px);
+          border-color: #2196f3;
+          color: #2196f3;
+      }
+
+      .configure-btn {
+          margin-top: auto;
+          background-color: #2196f3;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 0.5rem;
+          cursor: pointer;
+          font-size: 0.9rem;
+          transition: background-color 0.3s ease;
+          width: 100%;
+          text-align: center;
+      }
+
+      .configure-btn:hover {
+          background-color: #1976d2;
+      }
+
+      .error-message {
+          text-align: center;
+          margin-top: 1rem;
+          color: #ff4444;
+          font-weight: bold;
+      }
+  </style>
+</head>
+<body>
+<div id="user-info">
+  <span id="username">Username</span>
+  <img id="avatar" src="/images/default-avatar.png" alt="Profile Picture" />
+</div>
+
+<div class="container">
+  <h1>Modules</h1>
+  <p>Select a module to configure or manage.</p>
+  <div id="module-list"></div>
+  <div id="error-box" class="error-message"></div>
+</div>
+
+<script type="module">
+  // Hardcoded modules list
+  const modules = [
+    { id: "moderation", name: "Moderation", description: "Manage bans, kicks, mutes, and filters" },
+    { id: "logging", name: "Logging", description: "Track server events like joins, leaves, and edits" },
+    { id: "autorole", name: "Auto-Role", description: "Automatically assign roles to new members" },
+    { id: "welcome", name: "Welcome Messages", description: "Send greetings to new members" },
+    { id: "automod", name: "AutoMod", description: "Automatically filter spam, links, and bad words" }
+  ];
+
+  function renderModuleCards(modules) {
+    const container = document.getElementById("module-list");
+    container.innerHTML = "";
+
+    modules.forEach(module => {
+      const card = document.createElement("article");
+      card.className = "module-card";
+      card.setAttribute("data-route", `modules/${module.id}`);
+      card.innerHTML = `
+          <div>
+            <h2>${module.name}</h2>
+            <p>${module.description}</p>
+          </div>
+          <button class="configure-btn">Configure</button>
+        `;
+
+      // Make the whole card clickable
+      card.onclick = () => navigate(card.getAttribute("data-route"));
+
+      // Configure button also works, but stops bubbling
+      card.querySelector(".configure-btn").onclick = (e) => {
+        e.stopPropagation();
+        navigate(card.getAttribute("data-route"));
+      };
+
+      container.appendChild(card);
+    });
+  }
+
+  async function navigate(route) {
+    if (route.startsWith("modules/")) {
+      const moduleId = route.split("/")[1];
+      try {
+        const res = await fetch(`/api/modules/${moduleId}/check`);
+        const data = await res.json();
+        if (data.available) {
+          // Redirect to the module dashboard
+          window.location.href = `/dashboard/modules/${moduleId}`;
+        } else {
+          document.getElementById("error-box").textContent =
+            "ERROR! This module is not available.";
+        }
+      } catch (err) {
+        console.error("Module check failed:", err);
+        document.getElementById("error-box").textContent =
+          "ERROR! Could not verify module availability.";
+      }
+    }
+  }
+
+  // Render the modules
+  renderModuleCards(modules);
+
+  // Example: fetch user info
+  fetch('/api/me')
+    .then(res => res.json())
+    .then(user => {
+      document.getElementById('username').textContent = user.username;
+      document.getElementById('avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+    })
+    .catch(err => console.error('Failed to load user info:', err));
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Server Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+  <h1>Server Dashboard</h1>
+  <p id="server-id">Loading server info...</p>
+</div>
+
+<script>
+  const serverId = window.location.pathname.split("/").pop();
+  const serverName = document.createElement("h2");
+  const serverIcon = document.createElement("img");
+
+  document.getElementById("server-id").textContent = `Server ID: ${serverId}`;
+  document.querySelector(".container").appendChild(serverName);
+  document.querySelector(".container").appendChild(serverIcon);
+
+  fetch(`/api/guilds/${serverId}`)
+    .then(res => res.json())
+    .then(guild => {
+      serverName.textContent = `Server Name: ${guild.name}`;
+      if (guild.icon) {
+        serverIcon.src = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
+        serverIcon.alt = `${guild.name} icon`;
+        serverIcon.style.width = "96px";
+        serverIcon.style.borderRadius = "12px";
+        serverIcon.style.marginTop = "1rem";
+      }
+    })
+    .catch(err => {
+      serverName.textContent = "Failed to load server info.";
+      console.error("Error loading guild:", err);
+    });
+</script>
+</body>
+</html>

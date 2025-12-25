@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OAuth Callback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+      body {
+          font-family: "Segoe UI", Roboto, Arial, sans-serif;
+          background: #0f1115;
+          color: #e6eaf2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          margin: 0;
+      }
+      h1 { margin-bottom: 12px; }
+      p { color: #9aa4b2; }
+      .code-box {
+          background: #1a1f29;
+          padding: 12px 20px;
+          border-radius: 8px;
+          margin-top: 20px;
+          font-family: monospace;
+          color: #e6eaf2;
+      }
+  </style>
+</head>
+<body>
+<h1>Redirect Successful</h1>
+<p>Discord has redirected you back. Processing your login…</p>
+<div id="code" class="code-box"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+
+  if (code) {
+    document.getElementById("code").textContent = "OAuth code: " + code;
+
+    // Example: send the code to your backend or Supabase
+    // fetch("https://your-backend.com/exchange", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ code })
+    // })
+    // .then(res => res.json())
+    // .then(data => {
+    //   console.log("Token exchange result:", data);
+    //   // Redirect to dashboard or show success message
+    // });
+  } else {
+    document.getElementById("code").textContent = "No code found in URL.";
+  }
+</script>
+</body>
+</html>

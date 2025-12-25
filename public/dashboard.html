@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comorade - Server Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+      :root {
+          --bg: #0a0a0a;
+          --panel: #111;
+          --border: #1e1e1e;
+          --text: #d0d0d0;
+          --muted: #9aa0a6;
+          --accent: #2196f3;
+          --accent-hover: #1976d2;
+          --card: #151515;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+          margin: 0;
+          font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+          background: var(--bg);
+          color: var(--text);
+      }
+
+      header.top-bar {
+          position: fixed;
+          top: 0; left: 0; right: 0;
+          height: 64px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 24px;
+          background: var(--panel);
+          border-bottom: 1px solid var(--border);
+          z-index: 10;
+      }
+      .brand {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          color: var(--accent);
+      }
+      .brand::before {
+          content: "";
+          width: 18px; height: 18px;
+          border-radius: 4px;
+          background: linear-gradient(135deg, var(--accent), #4fb3ff);
+          box-shadow: 0 0 12px rgba(33, 150, 243, 0.35);
+      }
+
+      .top-right {
+          display: flex; align-items: center; gap: 12px;
+      }
+      .user-avatar {
+          width: 28px; height: 28px;
+          border-radius: 50%;
+          border: 1px solid var(--border);
+          display: none;
+      }
+
+      aside.sidebar {
+          position: fixed;
+          top: 64px; left: 0; bottom: 0;
+          width: 220px;
+          background: var(--panel);
+          border-right: 1px solid var(--border);
+          padding: 16px;
+      }
+      .nav-title {
+          font-size: 0.85rem;
+          color: var(--muted);
+          margin-bottom: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+      }
+      nav ul { list-style: none; padding: 0; margin: 0; }
+      nav li {
+          padding: 10px 12px;
+          border-radius: 8px;
+          color: var(--text);
+          cursor: pointer;
+          transition: background 0.2s ease, color 0.2s ease;
+          display: flex; align-items: center; gap: 8px;
+      }
+      nav li:hover { background: #141414; color: var(--accent); }
+      nav li.active { background: #141414; color: var(--accent); }
+
+      main.content {
+          margin-left: 220px;
+          padding: 24px;
+          padding-top: 88px;
+      }
+      .welcome {
+          margin-bottom: 18px;
+      }
+      .welcome h2 {
+          margin: 0 0 8px;
+          color: var(--accent);
+          font-size: 2rem;
+          font-weight: 800;
+      }
+      .welcome p {
+          margin: 0;
+          color: var(--muted);
+      }
+
+      .grid {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(220px, 1fr));
+          gap: 16px;
+      }
+      @media (max-width: 1200px) {
+          .grid { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+      }
+      @media (max-width: 900px) {
+          .grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      }
+      @media (max-width: 600px) {
+          .grid { grid-template-columns: 1fr; margin-left: 0; }
+          aside.sidebar { width: 180px; }
+          main.content { margin-left: 180px; }
+      }
+
+      .card {
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 16px;
+          transition: box-shadow 0.25s ease, transform 0.06s ease, border-color 0.2s ease;
+          cursor: pointer;
+          min-height: 120px;
+          display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .card:hover {
+          box-shadow: 0 0 14px rgba(33, 150, 243, 0.25);
+          transform: translateY(-2px);
+          border-color: #1f3b53;
+      }
+      .card h3 {
+          margin: 0 0 6px;
+          color: var(--text);
+          font-size: 1.05rem;
+          font-weight: 700;
+      }
+      .card p {
+          margin: 0;
+          color: var(--muted);
+          font-size: 0.95rem;
+      }
+
+      .footer-info {
+          position: fixed;
+          right: 16px; bottom: 14px;
+          color: var(--muted);
+          font-size: 0.9rem;
+          background: #121212;
+          border: 1px solid var(--border);
+          padding: 6px 10px;
+          border-radius: 10px;
+      }
+  </style>
+</head>
+<body>
+<header class="top-bar">
+  <div class="brand">Comorade</div>
+  <div class="top-right">
+    <img id="user-avatar" class="user-avatar" src="" alt="User Avatar">
+    <span id="user-name">Admin</span>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="nav-title">Navigation</div>
+  <nav>
+    <ul>
+      <li class="active" data-route="dashboard">Dashboard</li>
+      <li data-route="modules">Modules</li>
+      <li data-route="templates">Message Templates</li>
+      <li data-route="stats">Statistics</li>
+      <li data-route="panel">Server Panel</li>
+    </ul>
+  </nav>
+</aside>
+
+<main class="content">
+  <section class="welcome">
+    <h2 id="welcome-message">Welcome, Admin</h2>
+    <p>Manage your server and view statistics using the tools below.</p>
+  </section>
+
+  <section class="grid">
+    <article class="card" data-route="modules">
+      <h3>Modules</h3>
+      <p>Enable and configure modules</p>
+    </article>
+
+    <article class="card" data-route="templates">
+      <h3>Message Templates</h3>
+      <p>Create custom message templates</p>
+    </article>
+
+    <article class="card" data-route="stats">
+      <h3>Statistics</h3>
+      <p>View server data and usage</p>
+    </article>
+
+    <article class="card" data-route="panel">
+      <h3>Server Panel</h3>
+      <p>Configure server settings and roles</p>
+    </article>
+  </section>
+</main>
+
+<div class="footer-info" id="footer-info">—</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    async function loadUser() {
+      try {
+        const res = await fetch('/api/me');
+        if (!res.ok) {
+          console.error('API /api/me not responding');
+          return;
+        }
+        const user = await res.json();
+        console.log('User loaded:', user);
+
+        const name = user.username || user.global_name || user.display_name || "Admin";
+        document.getElementById('user-name').textContent = name;
+        document.getElementById('welcome-message').textContent = `Welcome, ${name}`;
+
+        if (user.id) {
+          let avatarUrl;
+          if (user.avatar) {
+            const ext = user.avatar.startsWith("a_") ? "gif" : "png";
+            avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}`;
+          } else {
+            // Fallback to default Discord avatar
+            const disc = user.discriminator ? parseInt(user.discriminator, 10) : 0;
+            avatarUrl = `https://cdn.discordapp.com/embed/avatars/${disc % 5}.png`;
+          }
+          const avatarEl = document.getElementById('user-avatar');
+          avatarEl.src = avatarUrl;
+          avatarEl.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Error loading user:', err);
+      }
+    }
+
+    loadUser();
+
+    const footer = document.getElementById('footer-info');
+    const now = new Date();
+    footer.textContent = `Comorade • ${now.toLocaleString()} • Dashboard ready`;
+  });
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // existing loadUser() code ...
+
+    // Redirect handlers for navigation
+    document.querySelectorAll('[data-route="modules"]').forEach(el => {
+      el.addEventListener('click', () => {
+        window.location.href = '/modules';
+      });
+    });
+
+    // You can add similar handlers for other routes if needed:
+    // document.querySelectorAll('[data-route="templates"]').forEach(el => {
+    //   el.addEventListener('click', () => {
+    //     window.location.href = '/templates';
+    //   });
+    // });
+  });
+</script>
+</body>
+</html>
